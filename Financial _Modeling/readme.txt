@@ -1,1 +1,0 @@
-This Financial Modeling project completed by four members in the big data analytics courses. 
