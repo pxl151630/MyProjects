@@ -1,1 +1,1 @@
-<font size="25">My Projects</font>
+<title>My Projects</title>
