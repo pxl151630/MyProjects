@@ -1,0 +1,189 @@
+Data Preprocessing: (In Hive)
+# 1.Create database:
+CREATE DATABASE final_project;
+# 2.Create temporary tables:
+CREATE TABLE bdata_m0 
+(ID    STRING,
+cf_td  FLOAT,
+ca_cl  FLOAT,
+re_ta  FLOAT,
+ni_ta  FLOAT,
+td_ta  FLOAT,
+s_ta   FLOAT,
+wc_ta  FLOAT,
+wc_s   FLOAT,
+c_cl   FLOAT,
+cl_e   FLOAT,
+in_s   FLOAT,
+mve_td  FLOAT,
+bstatus   STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE; 
+CREATE TABLE bdata_m1 
+(ID    STRING,
+cf_td  FLOAT,
+ca_cl  FLOAT,
+re_ta  FLOAT,
+ni_ta  FLOAT,
+td_ta  FLOAT,
+s_ta   FLOAT,
+wc_ta  FLOAT,
+wc_s   FLOAT,
+c_cl   FLOAT,
+cl_e   FLOAT,
+in_s   FLOAT,
+mve_td  FLOAT,
+bstatus   STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE;
+# 3.Load data from text files to temp tables:
+LOAD DATA INPATH '/final/bdata-m1-bank.txt' OVERWRITE INTO TABLE 
+bdata_m0;
+LOAD DATA INPATH '/final/bdata-m1-nonbank.txt' OVERWRITE INTO TABLE 
+bdata_m1;
+
+# 4.Create regular tables in the ¡¥RCFILE¡¦ format:
+CREATE TABLE m0 
+(ID    STRING,
+cf_td  FLOAT,
+ca_cl  FLOAT,
+re_ta  FLOAT,
+ni_ta  FLOAT,
+td_ta  FLOAT,
+s_ta   FLOAT,
+wc_ta  FLOAT,
+wc_s   FLOAT,
+c_cl   FLOAT,
+cl_e   FLOAT,
+in_s   FLOAT,
+mve_td  FLOAT,
+bstatus   STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS RCFILE
+TBLPROPERTIES ("skip.header.line.count"="1");
+CREATE TABLE m1 
+(ID    STRING,
+cf_td  FLOAT,
+ca_cl  FLOAT,
+re_ta  FLOAT,
+ni_ta  FLOAT,
+td_ta  FLOAT,
+s_ta   FLOAT,
+wc_ta  FLOAT,
+wc_s   FLOAT,
+c_cl   FLOAT,
+cl_e   FLOAT,
+in_s   FLOAT,
+mve_td  FLOAT,
+bstatus   STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS RCFILE
+TBLPROPERTIES ("skip.header.line.count"="1");
+# 5.Load data from temporary (bdadta_m0, bdata_m1) tables to the RCFILE ¡V format tables: 
+INSERT OVERWRITE TABLE m0
+SELECT ID, cf_td, ca_cl, re_ta, ni_ta, td_ta, s_ta, wc_ta, wc_s, c_cl,
+cl_e, in_s, mve_td, bstatus
+FROM bdata_m0;
+INSERT OVERWRITE TABLE m1
+SELECT ID, cf_td, ca_cl, re_ta, ni_ta, td_ta, s_ta, wc_ta, wc_s, c_cl,
+cl_e, in_s, mve_td, bstatus
+FROM bdata_m1;
+
+# 6.Splitting Data: 
+
+Testing:  
+SELECT *
+FROM m0 
+WHERE m0.ID BETWEEN 1 AND 71
+UNION ALL
+SELECT * 
+FROM m1 
+WHERE m1.id BETWEEN 363 AND 2703;
+Training 1:
+SELECT *
+FROM m0 
+WHERE m0.ID BETWEEN 72 AND 168
+UNION ALL
+SELECT * 
+FROM m1 
+WHERE m1.id BETWEEN 2704 AND 5873;
+Training 2:
+SELECT *
+FROM m0 
+WHERE m0.ID BETWEEN 169 AND 265
+UNION ALL
+SELECT * 
+FROM m1 
+WHERE m1.id BETWEEN 5874 AND 9043;
+Training 3:
+SELECT *
+FROM m0 
+WHERE m0.ID BETWEEN 265 AND 363
+UNION ALL
+SELECT * 
+FROM m1 
+WHERE m1.id BETWEEN 9044 AND 12212;
+
+# 7.SAS code for logistic regression (highlight)
+/*logistic regression on training 1*/
+proc logistic data=b.train_1;
+model bstatus = cf_td ca_cl re_ta ni_ta td_ta s_ta wc_ta wc_s c_cl cl_e in_s 
+mve_td;
+run;
+/*logistic regression on training 2*/
+proc logistic data=b.train_2;
+model bstatus = cf_td ca_cl re_ta ni_ta td_ta s_ta wc_ta wc_s c_cl cl_e in_s 
+mve_td;
+run;
+/*logistic regression on training 3*/
+proc logistic data=b.train_3;
+model bstatus = cf_td ca_cl re_ta ni_ta td_ta s_ta wc_ta wc_s c_cl cl_e in_s 
+mve_td;
+run;
+/*after select each significant variables from training dataset, we run 
+logistic regression with selected variables on testing*/
+proc logistic data=b.TESTING outest=est noprint;
+model bstatus = cf_td ca_cl re_ta ni_ta td_ta s_ta wc_ta c_cl mve_td;
+run;
+/*scoring out the result from logistic regression model*/
+proc score score = est data=b.TESTING type=parms out=cl;
+var cf_td ca_cl re_ta ni_ta td_ta s_ta wc_ta c_cl mve_td;
+run;
+
+/*set up the cut off number*/
+data b.cl; set b.cl;
+phat = exp(bstatus)/(1+exp(bstatus));
+if phat < 0.6 then bank = "Bankruptcy";
+if phat >=0.6 then bank = "Non-Bankruptcy";
+/*classification table*/
+proc freq data=b.log_train3;
+table actual*into_l;
+run;
+/*hold out sample from testing data*/
+data b.test_tmp b.test_tmp_hold; set b.testing;
+p = rand('UNIFORM');
+if p <= 0.2 then output b.test_tmp_hold;
+else output b.test_tmp;
+run;
+/*calculate prediction rate from hold out sample*/
+data b.test_tmp_hold; set b.test_tmp_hold;
+actual = bstatus;
+intercept = 1;
+drop bstatus;
+run;
+proc score score = b.est data=b.test_tmp_hold type=parms out=b.log;
+var intercept cf_td ca_cl re_ta ni_ta td_ta s_ta wc_ta c_cl mve_td ;
+run;
+data b.log; set b.log;
+phat = exp(bstatus)/(1+exp(bstatus));
+if phat < 0.5 then into_l = 2;
+if phat >=0.5 then into_l = 1;
+run;
+proc freq data=b.log;
+title 'Actual vs. Predicted on hold-out sample using LR';
+tables actual*into_l;
+run;
