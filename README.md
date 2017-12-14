@@ -25,5 +25,9 @@ Here is some more detailed in formation about projects I have done within two ye
   Our optimization goals are to maximize the number of flights, utilize aircraft as evenly as possible, and utilize gates at airports as evenly as possible, and distribute flights among all 6 markets. <br>
 * Fiancial Modeling <br>
 [Financial modeling.pptx](https://github.com/pxl151630/MyProjects/blob/master/Financial%20modeling.pptx) <br>
-This objective is to predict the likelihood of a company being bankrupt or nonbankrupt by using provided financial characteristics. 
+This objective is to predict the likelihood of a company being bankrupt or nonbankrupt by using provided financial characteristics. <br>
+* Analytics Practium <br>
+[Analytics Practium ] <br>
+This objective is to assist American Heart Association to define and to get more understanding to zero dollar participants using stastically techniques such as segmentation, logistic regression by using R. And there are some visualizations to give American Heart Association to get more insight about their data.   
+
 
