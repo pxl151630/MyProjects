@@ -3,7 +3,7 @@
 Here is some more detailed in formation about projects I have done within two years.
 
 * Python Examples - I do not consider myself a programmer; I create these little programs as experiments to have a play with the language. I would gladly accept pointers from others to improve the code and make it more efficient, or simplify the code. If you would like to make any comments then please feel free to email me at techjennifer@gmail.com. <br>
-create_flight_schedule.py <br>
+[create_flight_schedule.py](https://github.com/pxl151630/MyProjects/blob/master/Python%20Examples/create_flight_schedule.py) <br>
   * Scenario <br>
   A new startup airline is needing help with creating and optimizing a flight schedule. They have hired you as a data scientist to create and optimize a flight schedule. The airlines will be all business class and cater to business travel. All aircraft are configured exactly the same and can fly any route in the system interchangeably. The airline will serve Dallas Love Field (DAL), Austin Bergstrom (AUS), and Houston Hobby (HOU). 
   * Aircraft and Tail Numbers <br>
@@ -22,4 +22,12 @@ create_flight_schedule.py <br>
   DAL has 2 gates, ground time is 30 minutes <br>
   HOU has 3 gates, ground time is 35 minutes <br>
   * Optimization Goals <br>
-  Our optimization goals are to maximize the number of flights, utilize aircraft as evenly as possible, and utilize gates at airports as evenly as possible, and distribute flights among all 6 markets.
+  Our optimization goals are to maximize the number of flights, utilize aircraft as evenly as possible, and utilize gates at airports as evenly as possible, and distribute flights among all 6 markets. <br>
+* Fiancial Modeling <br>
+[Financial modeling.pptx](https://github.com/pxl151630/MyProjects/blob/master/Financial%20modeling.pptx) <br>
+This objective is to predict the likelihood of a company being bankrupt or nonbankrupt by using provided financial characteristics. <br>
+* Analytics Practium <br>
+[Analytics Practium ] <br>
+This objective is to assist American Heart Association to define and to get more understanding to zero dollar participants using stastically techniques such as segmentation, logistic regression by using R. And there are some visualizations to give American Heart Association to get more insight about their data.   
+
+
