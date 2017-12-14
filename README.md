@@ -22,4 +22,8 @@ Here is some more detailed in formation about projects I have done within two ye
   DAL has 2 gates, ground time is 30 minutes <br>
   HOU has 3 gates, ground time is 35 minutes <br>
   * Optimization Goals <br>
-  Our optimization goals are to maximize the number of flights, utilize aircraft as evenly as possible, and utilize gates at airports as evenly as possible, and distribute flights among all 6 markets.
+  Our optimization goals are to maximize the number of flights, utilize aircraft as evenly as possible, and utilize gates at airports as evenly as possible, and distribute flights among all 6 markets. <br>
+* Fiancial Modeling <br>
+[Financial modeling.pptx](https://github.com/pxl151630/MyProjects/blob/master/Financial%20modeling.pptx) <br>
+This objective is to predict the likelihood of a company being bankrupt or nonbankrupt by using provided financial characteristics. 
+
